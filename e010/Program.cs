@@ -1,7 +1,7 @@
 ﻿/*
  * Bill Nicholson
  * nicholdw@ucmail.uc.edu
- * What is the smallest number > 1000000000 such that:
+ * What is the smallest number > 1000000001 such that:
  *  it is prime
  *  the reverse is prime
  *  the sum of the digits is prime
@@ -10,41 +10,53 @@
  * By definition 0 is not prime
  * By definition 1 is not prime
  * 
+ * For 11111111: Solution = 133337333
+ * 
  */
 using System;
 
 
-namespace e010
-{
-    class Program
-    {
+namespace e010 {
+    class Program {
         static void Main(string[] args) {
-            Console.WriteLine(Solve());
+            Console.WriteLine("Solution = " + Solve());
+            Console.ReadLine();
         }
-        public static int Solve() {
-            int result = 0;
-            //int num = 10000;          // 10007 and 70001
-            //int num = 100000;         // 100049 and 940001
-            //int num = 1000000;        // 1000033 and 3300001
-            int num = 1111111111;
+        public static long Solve() {
+            long result = 0;
+            long num = 1000000001;
             while (true) {
-                if (CheckForPrimeDigits(num)) {
+                Boolean isPrime;
+                isPrime = true;
+                int limit;
+                limit = (int)Math.Sqrt(num);
+                for (long i = 3; i <= limit; i += 2) {if (num % i == 0) { isPrime = false; break; }}
+
+                if (isPrime) {
+                    String numString = Convert.ToString(num);
                     int sumOfDigits = 0;
-                    sumOfDigits = CalcSumOfDigits(num);
-                    if (IsPrime(num) && (IsPrime(sumOfDigits)) && (IsPrime(Convert.ToInt32(Reverse(Convert.ToString(num))))) ) {
-                        Console.WriteLine(num + ", Sum of Digits = " + sumOfDigits);
-                        result = num;
-                        break;
+                    sumOfDigits = CalcSumOfDigits(numString);
+                    if (IsPrime(sumOfDigits)) {
+                        if (CheckForPrimeDigits(numString)) {
+                            if ((IsPrime(Convert.ToInt32(Reverse(numString)))) ) {
+//                              Console.WriteLine(num + ", Sum of Digits = " + sumOfDigits);
+                                result = num;
+                                break;
+                            }
+                        }
                     }
                 }
                 num += 2;
+                if (num % 555555 == 0) {Console.WriteLine(num); }
             }
             return result;
         }
-        private static Boolean IsPrime(int num) {
+        private static Boolean IsPrime(long num) {
             Boolean isPrime = true;
+            long limit;
+            limit = (int)Math.Sqrt(num);
             if (num % 2 == 0 || num == 0 || num == 1) { return false; }
-            for (int i = 3; i < num / 2; i += 2) {
+            for (int i = 3; i <= limit; i += 2) {
                 if (num % i == 0) { isPrime = false; break; }
             }
             return isPrime;
@@ -56,14 +68,14 @@ namespace e010
             Array.Reverse(charArray);
             return new string(charArray);
         }
-        public static int CalcSumOfDigits(int num) {
+        public static int CalcSumOfDigits(String num) {
             int sum = 0;
-            foreach (Char c in Convert.ToString(num)) {
+            foreach (Char c in num) {
                 sum += Convert.ToInt32(c) - 48;
             }
             return sum;
         }
-        public static Boolean CheckForNonPrimeDigits(int num)
+        public static Boolean CheckForNonPrimeDigits(long num)
         {
             Char[] c = Convert.ToString(num).ToCharArray();
             for(int i = 1; i < c.Length - 1; i++) {
@@ -73,9 +85,9 @@ namespace e010
             }
             return true;
         }
-        public static Boolean CheckForPrimeDigits(int num)
+        public static Boolean CheckForPrimeDigits(String numString)
         {
-            Char[] c = Convert.ToString(num).ToCharArray();
+            Char[] c = numString.ToCharArray();
             for (int i = 1; i < c.Length - 1; i++)
             {
                 int digit;
